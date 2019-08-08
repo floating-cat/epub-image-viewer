@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ScalaCompilerConfiguration">
+    <profile name="sbt 1" modules="epub-image-viewer_4754" />
+    <profile name="sbt 2" modules="epub-image-viewer">
+      <parameters>
+        <parameter value="-Ymacro-annotations" />
+        <parameter value="-P:scalajs:sjsDefinedByDefault" />
+      </parameters>
+      <plugins>
+        <plugin path="$USER_HOME$/.ivy2/cache/org.scala-js/scalajs-compiler_2.13.0/jars/scalajs-compiler_2.13.0-0.6.28.jar" />
+      </plugins>
+    </profile>
+  </component>
+</project>
