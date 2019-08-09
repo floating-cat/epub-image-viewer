@@ -12,6 +12,7 @@ scalacOptions ++= Seq(
 libraryDependencies ++= Seq(
   "me.shadaj" %%% "slinky-web" % "0.6.2",
   "me.shadaj" %%% "slinky-hot" % "0.6.2",
+  "org.scala-js" %%% "scalajs-dom" % "0.9.7",
   "org.scalatest" %%% "scalatest" % "3.0.8" % Test
 )
 
@@ -25,6 +26,7 @@ npmDependencies in Compile ++= Seq(
   "html-webpack-plugin" -> "3.2.0",
   "copy-webpack-plugin" -> "5.0.2",
   "webpack-merge" -> "4.2.1",
+  "libarchive.js" -> "1.2.0"
 )
 
 version in webpack := "4.29.6"
