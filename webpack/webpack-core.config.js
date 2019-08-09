@@ -33,6 +33,11 @@ module.exports = {
     ]
   },
   plugins: [
+    // Web Worker need a js file to do work
+    // so we export this js file separately
+    new CopyWebpackPlugin([
+      { from: "libarchive.js/dist", context: 'node_modules' }
+    ]),
     new CopyWebpackPlugin([
       { from: path.resolve(__dirname, "../../../../public") }
     ]),
