@@ -13,6 +13,11 @@ libraryDependencies ++= Seq(
   "me.shadaj" %%% "slinky-web" % "0.6.2",
   "me.shadaj" %%% "slinky-hot" % "0.6.2",
   "org.scala-js" %%% "scalajs-dom" % "0.9.7",
+  "org.typelevel" %%% "cats-core" % "2.0.0-RC1",
+  "org.typelevel" %%% "cats-effect" % "2.0.0-RC1",
+  "dev.zio" %%% "zio" % "1.0.0-RC11-1",
+  // temporarily use %% because of https://github.com/zio/interop-cats/pull/28
+  "dev.zio" %% "zio-interop-cats" % "2.0.0.0-RC2",
   "org.scalatest" %%% "scalatest" % "3.0.8" % Test
 )
 
