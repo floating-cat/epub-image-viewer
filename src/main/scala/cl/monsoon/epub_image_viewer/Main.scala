@@ -27,6 +27,6 @@ object Main {
       elem
     }
 
-    ReactDOM.render(App(), container)
+    ReactDOM.render(App(), container): Unit
   }
 }
