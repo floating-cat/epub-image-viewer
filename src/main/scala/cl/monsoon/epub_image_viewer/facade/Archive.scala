@@ -11,7 +11,7 @@ import scala.scalajs.js.annotation.JSImport
 class Archive(@unused file: File, @unused options: Options) extends js.Object {
   def open(): js.Promise[Archive] = js.native
 
-  def extractFiles(): js.Promise[js.Dictionary[File]] = js.native
+  def extractFiles(): js.Promise[js.Dynamic] = js.native
 }
 
 trait Options extends js.Object {

@@ -25,7 +25,10 @@ import slinky.web.html._
             .open()
             .toFuture
             .flatMap(_.extractFiles().toFuture)
-            .foreach(o => dom.console.log(o))
+            .foreach { o =>
+              val epubReader = new EpubReaderJs
+              epubReader.parse.provide(EpubReaderJs.getFileSupplier(o))
+            }
         })
       )
     )
