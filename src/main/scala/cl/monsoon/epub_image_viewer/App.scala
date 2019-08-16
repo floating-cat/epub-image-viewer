@@ -1,12 +1,13 @@
 package cl.monsoon.epub_image_viewer
 
-import cl.monsoon.epub_image_viewer.facade.{Archive, Options}
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import org.scalajs.dom
+import cl.monsoon.epub_image_viewer.facade.Archive
+import org.scalajs.dom.console.log
 import slinky.core._
 import slinky.core.annotations.react
 import slinky.web.html._
+import zio.{DefaultRuntime, ZIO}
+
+import scala.util.chaining._
 
 @react object App {
   type Props = Unit
@@ -16,19 +17,13 @@ import slinky.web.html._
       input(
         `type` := "file",
         onChange := (e => {
-          dom.console.log(e.target.files(0))
-          val archive = new Archive(e.target.files(0), new Options {
-            override def workerUrl: String = "worker-bundle.js"
-          })
-
-          archive
-            .open()
-            .toFuture
-            .flatMap(_.extractFiles().toFuture)
-            .foreach { o =>
-              val epubReader = new EpubReaderJs
-              epubReader.parse.provide(EpubReaderJs.getFileSupplier(o))
-            }
+          val epubFile = e.target.files(0)
+          ZIO
+            .effectTotal(log(epubFile))
+            .flatMap(_ => ZIO.fromFuture(ec => Archive.extractZip(epubFile)(ec)))
+            .flatMap(new EpubReaderJs().parse.provide)
+            .flatMap(files => ZIO.effectTotal(files.foreach(log(_))))
+            .pipe(new DefaultRuntime {}.unsafeRunAsync_(_))
         })
       )
     )
