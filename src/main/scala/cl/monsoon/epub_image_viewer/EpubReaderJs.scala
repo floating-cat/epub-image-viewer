@@ -92,14 +92,14 @@ final class EpubReaderJs extends EpubReader[File] {
       val fileReader = new org.scalajs.dom.FileReader()
       val textIO = IO.effectAsync[Error, String] { callback =>
         fileReader.onloadend = _ =>
-          if (fileReader.error != null) {
+          if (fileReader.error == null) {
             callback(IO.succeed[String](fileReader.result.asInstanceOf[String]))
           } else {
             callback(
               IO.fail(
                 NonEmptyChain(
                   s"Can't get $filePath content in epub: " +
-                    s"${fileReader.asInstanceOf[DOMException].message}."
+                    s"${fileReader.error.asInstanceOf[DOMException].message}."
                 )
               )
             )
@@ -130,7 +130,7 @@ object EpubReaderJs {
     paths
       .foldM(filesObject) { (nestFilesObject, path) =>
         val nest = nestFilesObject.selectDynamic(path)
-        Option.when(nest == null)(nest)
+        Option.when(nest != null)(nest)
       }
       // TODO
       .map(_.asInstanceOf[File])
