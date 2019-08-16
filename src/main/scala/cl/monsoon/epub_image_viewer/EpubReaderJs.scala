@@ -8,8 +8,6 @@ import org.scalajs.dom.ext._
 import org.scalajs.dom.{DOMParser, Document, File}
 import zio.{IO, ZIO}
 
-import scala.scalajs.js
-
 final class EpubReaderJs extends EpubReader[File] {
 
   val containerXmlFilePath = "META-INF/container.xml"
@@ -116,23 +114,5 @@ final class EpubReaderJs extends EpubReader[File] {
   private def parseXml(text: String): Document = {
     val parser = new DOMParser()
     parser.parseFromString(text, "text/xml")
-  }
-}
-
-object EpubReaderJs {
-  def getFileSupplier(filesObject: js.Dynamic): String => Option[File] = { filePath =>
-    val paths = if (filePath != null) {
-      filePath.split("/").toList
-    } else {
-      List.empty
-    }
-
-    paths
-      .foldM(filesObject) { (nestFilesObject, path) =>
-        val nest = nestFilesObject.selectDynamic(path)
-        Option.when(nest != null)(nest)
-      }
-      // TODO
-      .map(_.asInstanceOf[File])
   }
 }
