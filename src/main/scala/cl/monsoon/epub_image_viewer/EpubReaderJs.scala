@@ -53,10 +53,12 @@ final class EpubReaderJs extends EpubReader[File] {
         .getElementsByTagName("itemref")
         // https://github.com/typelevel/cats/issues/1222
         .toVector
-        .traverse { e =>
-          val idref = e.getAttribute("idref")
-          itemMap(idref).toValidNec(s"Can't find $idref hrefs in spine documents.")
-        }
+        .map(_.getAttribute("idref"))
+        // remove this file because this file doesn't in the DeDRMed Kobo books
+        .filterNot(_ == "kobo-locked.html")
+        .traverse(
+          idref => itemMap(idref).toValidNec(s"Can't find $idref hrefs in spine documents.")
+        )
 
       spineDocuments.fold(IO.fail, IO.succeed)
     }
