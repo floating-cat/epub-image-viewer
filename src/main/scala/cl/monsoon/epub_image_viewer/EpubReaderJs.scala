@@ -5,7 +5,7 @@ import cats.implicits._
 import cl.monsoon.epub_image_viewer.facade.DOMException
 import cl.monsoon.epub_image_viewer.util.ZIOImplicit._
 import org.scalajs.dom.ext._
-import org.scalajs.dom.{DOMParser, Document, File}
+import org.scalajs.dom.{DOMParser, Document, Element, File}
 import zio.{IO, ZIO}
 
 final class EpubReaderJs extends EpubReader[File] {
@@ -70,14 +70,20 @@ final class EpubReaderJs extends EpubReader[File] {
       .flatMap { texts =>
         texts.flatMap { textWithDocumentPath =>
           parseXml(textWithDocumentPath._1)
-            .getElementsByTagName("image")
-            .toVector
-            .map(
-              e =>
-                Option(e.getAttribute("xlink:href"))
-                  .filter(_.nonEmpty)
-                  .toValidNec(s"Can't find xlink:href in ${textWithDocumentPath._2} document.")
-            )
+          // the reason why we don't use image[xlink:href] or img[src] here
+          // is to fast fail code if these elements don't have this attribute
+            .querySelectorAll("image, img")
+            .toList
+            .map { node =>
+              // form MDN, the nodes returns from querySelectorAll all are elements
+              val element = node.asInstanceOf[Element]
+              Option(element.getAttribute("xlink:href"))
+                .orElse(Option(element.getAttribute("src")))
+                .filter(_.nonEmpty)
+                .toValidNec(
+                  s"Can't find xlink:href or src property in ${textWithDocumentPath._2} document."
+                )
+            }
         }.sequence
           .fold(IO.fail, IO.succeed)
       }
