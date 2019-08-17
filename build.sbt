@@ -1,6 +1,6 @@
 enablePlugins(ScalaJSBundlerPlugin)
 
-name := "epub-image-viewer"
+name := "epub-images-viewer"
 
 scalaVersion := "2.13.0"
 
