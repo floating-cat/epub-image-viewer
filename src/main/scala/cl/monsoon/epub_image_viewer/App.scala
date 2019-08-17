@@ -43,6 +43,9 @@ import scala.util.chaining._
                 imageViewedIndexUpdateState(imageViewedIndex - 1)
               }
             case "f" => autoFitImageUpdateState(!_)
+            case "e" =>
+              imageFileDataUrlsUpdateState(none)
+              imageViewedIndexUpdateState(0)
             case _ =>
           }
         }
@@ -66,7 +69,6 @@ import scala.util.chaining._
               imageDataUrls =>
                 ZIO.effect {
                   imageFileDataUrlsUpdateState(Some(imageDataUrls))
-                  imageViewedIndexUpdateState(0)
                 }
             )
             .pipe(new DefaultRuntime {}.unsafeRunAsync_(_))
