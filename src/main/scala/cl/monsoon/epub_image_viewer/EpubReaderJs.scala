@@ -1,7 +1,10 @@
 package cl.monsoon.epub_image_viewer
 
+import java.net.URI
+
 import cats.data._
 import cats.implicits._
+import cl.monsoon.epub_image_viewer.EpubReader.{FilePath, ImageFileDataUrl, ImageFilePath}
 import cl.monsoon.epub_image_viewer.facade.DOMException
 import cl.monsoon.epub_image_viewer.util.ZIOImplicit._
 import org.scalajs.dom.ext._
@@ -12,13 +15,14 @@ final class EpubReaderJs extends EpubReader[File] {
 
   val containerXmlFilePath = "META-INF/container.xml"
 
-  override def parse: FileReader[Seq[ImageFilePath]] =
+  override def getImageDataUrl: FileReader[Seq[ImageFileDataUrl]] =
     getContentOpfFile
       .flatMap(getSpineDocuments)
       .flatMap(getImageElements)
+      .flatMap(getImageFileDataUrl)
 
   private def getContentOpfFile: FileReader[FilePath] =
-    getFileText(containerXmlFilePath).flatMap { text =>
+    getFileContent(containerXmlFilePath).flatMap { text =>
       parseXml(text)
         .getElementsByTagName("rootfile")
         .toSeq
@@ -34,14 +38,14 @@ final class EpubReaderJs extends EpubReader[File] {
         )
     }
 
-  protected def getSpineDocuments(contentOpfPath: FilePath): FileReader[Seq[FilePath]] = {
+  private def getSpineDocuments(contentOpfPath: FilePath): FileReader[Seq[FilePath]] = {
     val fileParentRegex = "(.+/).+".r
     val fileParent = contentOpfPath match {
       case fileParentRegex(fileParentPath) => fileParentPath
       case _ => ""
     }
 
-    getFileText(contentOpfPath).flatMap { text =>
+    getFileContent(contentOpfPath).flatMap { text =>
       val document = parseXml(text)
       val itemMap = document
         .getElementsByTagName("item")
@@ -80,6 +84,9 @@ final class EpubReaderJs extends EpubReader[File] {
               Option(element.getAttribute("xlink:href"))
                 .orElse(Option(element.getAttribute("src")))
                 .filter(_.nonEmpty)
+                // Scala.js doesn't support java Path, so use uri.
+                // also see https://stackoverflow.com/a/10159309/2331527
+                .map(new URI(textWithDocumentPath._2).resolve(".").resolve(_).toString)
                 .toValidNec(
                   s"Can't find xlink:href or src property in ${textWithDocumentPath._2} document."
                 )
@@ -88,15 +95,26 @@ final class EpubReaderJs extends EpubReader[File] {
           .fold(IO.fail, IO.succeed)
       }
 
+  private def getImageFileDataUrl(
+      imageFilePaths: Seq[ImageFilePath]
+    ): FileReader[Seq[ImageFileDataUrl]] =
+    imageFilePaths.toVector
+      .traverse(getFileContent(_, Right("readAsDataUrl")))
+      .map(_.toSeq)
+
   private def getFile(filePath: FilePath): FileReader[File] =
     ZIO
       .access[FileSupplier](_(filePath))
       .someOrFail(NonEmptyChain(s"Can't find $filePath in this epub file"))
 
-  private def getFileText(filePath: FilePath): FileReader[String] =
+  private def getFileContent(
+      filePath: FilePath,
+      // looks | doesn't work well with literal-based singleton types
+      `type`: Either["readAsText", "readAsDataUrl"] = Left("readAsText")
+    ): FileReader[String] =
     getFile(filePath).flatMap { file =>
       val fileReader = new org.scalajs.dom.FileReader()
-      val textIO = IO.effectAsync[Error, String] { callback =>
+      val content = IO.effectAsync[Error, String] { callback =>
         fileReader.onloadend = _ =>
           if (fileReader.error == null) {
             callback(IO.succeed[String](fileReader.result.asInstanceOf[String]))
@@ -111,13 +129,17 @@ final class EpubReaderJs extends EpubReader[File] {
             )
           }
       }
-      fileReader.readAsText(file)
 
-      textIO
+      `type` match {
+        case Left("readAsText") => fileReader.readAsText(file)
+        case _ => fileReader.readAsDataURL(file)
+      }
+
+      content
     }
 
   private def getFileTextWithPath(filePath: FilePath): FileReader[(String, String)] =
-    getFileText(filePath).map((_, filePath))
+    getFileContent(filePath).map((_, filePath))
 
   private def parseXml(text: String): Document = {
     val parser = new DOMParser()
