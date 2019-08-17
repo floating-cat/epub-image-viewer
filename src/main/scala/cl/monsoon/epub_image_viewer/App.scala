@@ -4,6 +4,8 @@ import cats.implicits._
 import cl.monsoon.epub_image_viewer.EpubReader.ImageFileDataUrl
 import cl.monsoon.epub_image_viewer.facade.Archive
 import org.scalajs.dom.console.log
+import org.scalajs.dom.document
+import org.scalajs.dom.raw.KeyboardEvent
 import slinky.core._
 import slinky.core.annotations.react
 import slinky.core.facade.Hooks._
@@ -19,25 +21,59 @@ import scala.util.chaining._
   type Props = Unit
 
   @unused
+  // we need this in order to provide css styling
   private val css = AppCSS
 
   val component: FunctionalComponent[Props] = FunctionalComponent[Props] { _ =>
-    val (state, updateState) = useState(none[Seq[ImageFileDataUrl]])
-    val mainContent = if (state.isEmpty || state.get.isEmpty) {
+    val (imageFileDataUrls, imageFileDataUrlsUpdateState) = useState(none[Seq[ImageFileDataUrl]])
+    val (imageViewedIndex, imageViewedIndexUpdateState) = useState(0)
+
+    useEffect { () =>
+      // Use js function explicit because of  https://stackoverflow.com/q/57148965/2331527
+      val keyDownListener: js.Function1[KeyboardEvent, Unit] = { e: KeyboardEvent =>
+        imageFileDataUrls.foreach { urls =>
+          e.key match {
+            case "ArrowLeft" =>
+              if (urls.lengthIs >= imageViewedIndex + 1 + 1) {
+                imageViewedIndexUpdateState(imageViewedIndex + 1)
+              }
+            case "ArrowRight" =>
+              if (imageViewedIndex - 1 >= 0) {
+                imageViewedIndexUpdateState(imageViewedIndex - 1)
+              }
+          }
+        }
+      }
+
+      val eventName = "keydown"
+      document.addEventListener(eventName, keyDownListener)
+      () => document.removeEventListener(eventName, keyDownListener)
+    }
+
+    val mainContent = if (imageFileDataUrls.isEmpty || imageFileDataUrls.get.isEmpty) {
       input(
         `type` := "file",
-        onChange := (e => {
+        onChange := { e =>
           val epubFile = e.target.files(0)
           ZIO
             .effectTotal(log(epubFile))
             .flatMap(_ => ZIO.fromFuture(ec => Archive.extractZip(epubFile)(ec)))
             .flatMap(new EpubReaderJs().getImageDataUrl.provide)
-            .flatMap(imageDataUrls => ZIO.effectTotal(updateState(Some(imageDataUrls))))
+            .flatMap(
+              imageDataUrls =>
+                ZIO.effect {
+                  imageFileDataUrlsUpdateState(Some(imageDataUrls))
+                  imageViewedIndexUpdateState(0)
+                }
+            )
             .pipe(new DefaultRuntime {}.unsafeRunAsync_(_))
-        })
+        }
       )
     } else {
-      img(className := "illustration", src := state.get(0))
+      img(
+        className := "illustration",
+        src := imageFileDataUrls.get(imageViewedIndex)
+      )
     }
 
     div(className := "App")(mainContent)
