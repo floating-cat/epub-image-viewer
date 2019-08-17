@@ -1,13 +1,12 @@
 package cl.monsoon.epub_image_viewer
 
 import cats.data.NonEmptyChain
-import cl.monsoon.epub_image_viewer.EpubReader.{FilePath, ImageFileDataUrl}
+import cl.monsoon.epub_image_viewer.EpubReader.{Errors, FilePath, ImageFileDataUrl}
 import zio.ZIO
 
 trait EpubReader[File] {
   type FileSupplier = FilePath => Option[File]
-  type Error = NonEmptyChain[String]
-  type FileReader[A] = ZIO[FileSupplier, Error, A]
+  type FileReader[A] = ZIO[FileSupplier, Errors, A]
 
   // We don't validate the conformance of this EPUB strictly when we read this EPUB,
   // Of course this is not this program's responsibility.
@@ -18,4 +17,5 @@ object EpubReader {
   type FilePath = String
   type ImageFilePath = String
   type ImageFileDataUrl = String
+  type Errors = NonEmptyChain[String]
 }

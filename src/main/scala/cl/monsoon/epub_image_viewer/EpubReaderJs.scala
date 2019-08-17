@@ -4,7 +4,7 @@ import java.net.URI
 
 import cats.data._
 import cats.implicits._
-import cl.monsoon.epub_image_viewer.EpubReader.{FilePath, ImageFileDataUrl, ImageFilePath}
+import cl.monsoon.epub_image_viewer.EpubReader.{Errors, FilePath, ImageFileDataUrl, ImageFilePath}
 import cl.monsoon.epub_image_viewer.facade.DOMException
 import cl.monsoon.epub_image_viewer.util.ZIOImplicit._
 import org.scalajs.dom.ext._
@@ -31,7 +31,7 @@ final class EpubReaderJs extends EpubReader[File] {
         )
         .flatMap(e => Option(e.getAttribute("full-path")))
         .filter(_.nonEmpty)
-        .fold[IO[Error, FilePath]](
+        .fold[IO[Errors, FilePath]](
           IO.fail(NonEmptyChain("Can't find content.opf in epub."))
         )(
           IO.succeed
@@ -114,7 +114,7 @@ final class EpubReaderJs extends EpubReader[File] {
     ): FileReader[String] =
     getFile(filePath).flatMap { file =>
       val fileReader = new org.scalajs.dom.FileReader()
-      val content = IO.effectAsync[Error, String] { callback =>
+      val content = IO.effectAsync[Errors, String] { callback =>
         fileReader.onloadend = _ =>
           if (fileReader.error == null) {
             callback(IO.succeed[String](fileReader.result.asInstanceOf[String]))
