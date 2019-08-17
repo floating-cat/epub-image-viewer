@@ -41,7 +41,7 @@ object Archive {
       .foldM(filesObject) { (nestFilesObject, path) =>
         nestFilesObject
           .selectDynamic(path)
-          .pipe(nestFilesObject => Option.when(nestFilesObject != null)(nestFilesObject))
+          .pipe(nestFilesObject => Option.unless(js.isUndefined(nestFilesObject))(nestFilesObject))
       }
       .collect { case o if o.isInstanceOf[File] => o.asInstanceOf[File] }
   }
