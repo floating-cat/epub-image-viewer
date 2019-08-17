@@ -1,16 +1,17 @@
 package cl.monsoon.epub_image_viewer
 
+import cats.data.NonEmptyChain
 import cats.implicits._
-import cl.monsoon.epub_image_viewer.EpubReader.ImageFileDataUrl
+import cl.monsoon.epub_image_viewer.EpubReader.{Errors, ImageFileDataUrl}
 import cl.monsoon.epub_image_viewer.facade.Archive
 import org.scalajs.dom.console.log
-import org.scalajs.dom.document
 import org.scalajs.dom.raw.KeyboardEvent
+import org.scalajs.dom.{document, window}
 import slinky.core._
 import slinky.core.annotations.react
 import slinky.core.facade.Hooks._
 import slinky.web.html._
-import zio.{DefaultRuntime, ZIO}
+import zio.{DefaultRuntime, UIO, ZIO}
 
 import scala.annotation.unused
 import scala.scalajs.js
@@ -64,13 +65,20 @@ import scala.util.chaining._
           ZIO
             .effectTotal(log(epubFile))
             .flatMap(_ => ZIO.fromFuture(ec => Archive.extractZip(epubFile)(ec)))
+            .mapError[Errors](
+              e => NonEmptyChain(s"Can't load ${epubFile.name}: " + e.getMessage)
+            )
             .flatMap(new EpubReaderJs().getImageDataUrl.provide)
             .flatMap(
               imageDataUrls =>
-                ZIO.effect {
+                UIO.effectTotal {
                   imageFileDataUrlsUpdateState(Some(imageDataUrls))
                 }
             )
+            .flatMapError(o => {
+              window.alert(o.mkString_("", "\n", ""))
+              ZIO.none
+            })
             .pipe(new DefaultRuntime {}.unsafeRunAsync_(_))
         }
       )
