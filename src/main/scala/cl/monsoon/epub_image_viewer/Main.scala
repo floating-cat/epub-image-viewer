@@ -7,7 +7,7 @@ import slinky.web.ReactDOM
 import scala.scalajs.js.annotation.{JSExportTopLevel, JSImport}
 import scala.scalajs.{LinkingInfo, js}
 
-@JSImport("resources/index.css", JSImport.Default)
+@JSImport("resources/Index.css", JSImport.Default)
 @js.native
 object IndexCSS extends js.Object
 
