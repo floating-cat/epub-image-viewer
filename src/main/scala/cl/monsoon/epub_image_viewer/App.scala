@@ -27,6 +27,7 @@ import scala.util.chaining._
   val component: FunctionalComponent[Props] = FunctionalComponent[Props] { _ =>
     val (imageFileDataUrls, imageFileDataUrlsUpdateState) = useState(none[Seq[ImageFileDataUrl]])
     val (imageViewedIndex, imageViewedIndexUpdateState) = useState(0)
+    val (autoFitImage, autoFitImageUpdateState) = useState(true)
 
     useEffect { () =>
       // Use js function explicit because of  https://stackoverflow.com/q/57148965/2331527
@@ -41,6 +42,8 @@ import scala.util.chaining._
               if (imageViewedIndex - 1 >= 0) {
                 imageViewedIndexUpdateState(imageViewedIndex - 1)
               }
+            case "f" => autoFitImageUpdateState(!_)
+            case _ =>
           }
         }
       }
@@ -71,7 +74,7 @@ import scala.util.chaining._
       )
     } else {
       img(
-        className := "illustration",
+        className := "illustration" + (if (autoFitImage) " auto_fit" else ""),
         src := imageFileDataUrls.get(imageViewedIndex)
       )
     }
