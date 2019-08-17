@@ -60,6 +60,11 @@ import scala.util.chaining._
     val mainContent = if (imageFileDataUrls.isEmpty || imageFileDataUrls.get.isEmpty) {
       input(
         `type` := "file",
+        // We can add other archive formats here but we only accept .epub here
+        // in order to align the directory files search behavior (because we would
+        // only search .epub files when users select the directories).
+        // But users can still choose ALL Files in the input dialog.
+        accept := ".epub",
         onChange := { e =>
           val epubFile = e.target.files(0)
           ZIO
