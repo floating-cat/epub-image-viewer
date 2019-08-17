@@ -10,10 +10,16 @@ import slinky.core.facade.Hooks._
 import slinky.web.html._
 import zio.{DefaultRuntime, ZIO}
 
+import scala.annotation.unused
+import scala.scalajs.js
+import scala.scalajs.js.annotation.JSImport
 import scala.util.chaining._
 
 @react object App {
   type Props = Unit
+
+  @unused
+  private val css = AppCSS
 
   val component: FunctionalComponent[Props] = FunctionalComponent[Props] { _ =>
     val (state, updateState) = useState(none[Seq[ImageFileDataUrl]])
@@ -31,9 +37,13 @@ import scala.util.chaining._
         })
       )
     } else {
-      img(src := state.get(0))
+      img(className := "illustration", src := state.get(0))
     }
 
     div(className := "App")(mainContent)
   }
 }
+
+@JSImport("resources/App.css", JSImport.Default)
+@js.native
+object AppCSS extends js.Object
