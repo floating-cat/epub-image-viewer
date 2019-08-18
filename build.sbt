@@ -21,6 +21,12 @@ libraryDependencies ++= Seq(
   "org.scalatest" %%% "scalatest" % "3.0.8" % Test
 )
 
+libraryDependencies ++= Seq(
+  "com.eed3si9n.verify" %%% "verify" % "0.1.0" % Test
+)
+
+testFrameworks += new TestFramework("verify.runner.Framework")
+
 npmDependencies in Compile ++= Seq(
   "react" -> "16.8.6",
   "react-dom" -> "16.8.6",
