@@ -13,17 +13,18 @@ import slinky.core.facade.Hooks._
 import slinky.web.html._
 import zio.{DefaultRuntime, UIO, ZIO}
 
-import scala.annotation.unused
 import scala.scalajs.js
 import scala.scalajs.js.annotation.JSImport
 import scala.util.chaining._
 
+@JSImport("resources/App.css", JSImport.Default)
+@js.native
+object AppCSS extends js.Object
+
 @react object App {
   type Props = Unit
 
-  @unused
-  // we need this in order to provide css styling
-  private val css = AppCSS
+  val css: AppCSS.type = AppCSS
 
   val component: FunctionalComponent[Props] = FunctionalComponent[Props] { _ =>
     val (imageFileDataUrls, imageFileDataUrlsUpdateState) = useState(none[Seq[ImageFileDataUrl]])
@@ -60,11 +61,7 @@ import scala.util.chaining._
     val mainContent = if (imageFileDataUrls.isEmpty || imageFileDataUrls.get.isEmpty) {
       input(
         `type` := "file",
-        // We can add other archive formats here but we only accept .epub here
-        // in order to align the directory files search behavior (because we would
-        // only search .epub files when users select the directories).
-        // But users can still choose ALL Files in the input dialog.
-        accept := ".epub",
+        multiple,
         onChange := { e =>
           val epubFile = e.target.files(0)
           ZIO
@@ -97,7 +94,3 @@ import scala.util.chaining._
     div(className := "App")(mainContent)
   }
 }
-
-@JSImport("resources/App.css", JSImport.Default)
-@js.native
-object AppCSS extends js.Object
