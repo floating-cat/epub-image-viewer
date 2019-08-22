@@ -15,7 +15,6 @@ Select a EPUB and start reading.
 Press f key to switch back and forth between the full image mode and the auto fit image mode, press e key to begin with a new EPUB.
 
 ## TODO
-* Directories select (with sorting support).
 * Illustrations rotation support.
 * Add drag and drop for input files/directories.
 * Can peek the text near the illustrations.
