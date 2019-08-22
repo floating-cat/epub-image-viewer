@@ -21,7 +21,7 @@ object MainCSS extends js.Object
     val (imageFileDataUrls, imageFileDataUrlsUpdateState) = useState(none[Seq[ImageFileDataUrl]])
 
     val mainContent = if (imageFileDataUrls.isEmpty || imageFileDataUrls.get.isEmpty) {
-      FilesOrDirectoriesSelectView(
+      FilesOrDirectoriesInputView(
         (imageFileDataUrlsUpdateState(_: Option[Seq[ImageFileDataUrl]])).compose(Some(_))
       )
     } else {
