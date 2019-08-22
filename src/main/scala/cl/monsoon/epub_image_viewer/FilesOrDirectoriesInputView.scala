@@ -25,7 +25,7 @@ import scala.util.chaining._
 
   type Props = Seq[ImageFileDataUrl] => Unit
 
-  val component: FunctionalComponent[Props] = FunctionalComponent[Props] { _ =>
+  val component: FunctionalComponent[Props] = FunctionalComponent[Props] { props =>
     val (imageFiles, imageFilesUpdateState) = useState(Seq[File]())
 
     div(className := "row justify-content-md-center p-md-3")(
@@ -60,6 +60,11 @@ import scala.util.chaining._
           label(htmlFor := "directories", className := "btn btn-secondary")(
             "Select a EPUB directory"
           )
+        ),
+        div(className := "input-group ml-md-2", onClick := { _ =>
+          viewEpubFiles(imageFiles, props)
+        })(
+          label(className := "btn btn-success")("Start to view")
         )
       ),
       div(className := "w-100"),
