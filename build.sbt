@@ -37,6 +37,8 @@ npmDependencies in Compile ++= Seq(
   "html-webpack-plugin" -> "3.2.0",
   "copy-webpack-plugin" -> "5.0.2",
   "webpack-merge" -> "4.2.1",
+  "bootstrap" -> "4.3.1",
+  "react-bootstrap" -> "1.0.0-beta.12",
   "libarchive.js" -> "1.2.0"
 )
 
