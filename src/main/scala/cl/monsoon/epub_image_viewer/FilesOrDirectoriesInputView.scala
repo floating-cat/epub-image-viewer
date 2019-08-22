@@ -21,20 +21,48 @@ import zio.{DefaultRuntime, IO, UIO, ZIO}
 import scala.util.chaining._
 
 @react object FilesOrDirectoriesInputView {
+  val css: MainCSS.type = MainCSS
+
   type Props = Seq[ImageFileDataUrl] => Unit
 
   val component: FunctionalComponent[Props] = FunctionalComponent[Props] { _ =>
     val (imageFiles, imageFilesUpdateState) = useState(Seq[File]())
 
-    div()(
-      input(
-        `type` := "file",
-        webkitdirectory := "true",
-        multiple,
-        onChange := { e =>
-          addEpubFiles(e.target.files.toSeq, imageFilesUpdateState, true)
-        }
+    div(className := "row justify-content-md-center p-md-3")(
+      div(className := "btn-toolbar mb-md-2")(
+        div(className := "btn-group")(
+          input(
+            `type` := "file",
+            id := "files",
+            className := "hidden",
+            // We can add other archive formats here but we only accept .epub here
+            // in order to align the directory files search behavior (because we would
+            // only search .epub files when users select the directories).
+            // But users can still choose ALL Files in the input dialog.
+            accept := ".epub",
+            onChange := { e =>
+              addEpubFiles(e.target.files.toSeq, imageFilesUpdateState, false)
+            }
+          ),
+          label(htmlFor := "files", className := "btn btn-secondary")("Select EPUB files"),
+          input(
+            `type` := "file",
+            id := "directories",
+            className := "hidden",
+            webkitdirectory := "true",
+            multiple,
+            onChange := { e =>
+              addEpubFiles(e.target.files.toSeq, imageFilesUpdateState, true)
+            }
+          ),
+          // current multiple doesn't work with webkitdirectory
+          // so we use directory prompt here
+          label(htmlFor := "directories", className := "btn btn-secondary")(
+            "Select a EPUB directory"
+          )
+        )
       ),
+      div(className := "w-100"),
       FileNamesListView(imageFiles)
     )
   }
