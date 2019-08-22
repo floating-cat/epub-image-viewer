@@ -1,3 +1,8 @@
+/* use for https://stackoverflow.com/q/5138719 */
+.hidden {
+    display: none;
+}
+
 .illustration {
     display: block;
     margin: 0 auto;

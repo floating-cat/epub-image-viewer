@@ -18,7 +18,6 @@ Press f key to switch back and forth between the full image mode and the auto fi
 * Directories select (with sorting support).
 * Illustrations rotation support.
 * Add drag and drop for input files/directories.
-* UI improve.
 * Can peek the text near the illustrations.
 
 ## License

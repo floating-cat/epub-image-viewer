@@ -7,13 +7,6 @@ import slinky.core.annotations.react
 import slinky.core.facade.Hooks._
 import slinky.web.html._
 
-import scala.scalajs.js
-import scala.scalajs.js.annotation.JSImport
-
-@JSImport("resources/Main.css", JSImport.Default)
-@js.native
-object MainCSS extends js.Object
-
 @react object App {
   type Props = Unit
 
@@ -28,6 +21,6 @@ object MainCSS extends js.Object
       IllustrationDisplayView((imageFileDataUrls.get, imageFileDataUrlsUpdateState))
     }
 
-    div(className := "App")(mainContent)
+    div(className := "App container")(mainContent)
   }
 }
