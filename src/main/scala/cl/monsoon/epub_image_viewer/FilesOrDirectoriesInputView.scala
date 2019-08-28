@@ -14,22 +14,20 @@ import org.scalajs.dom.{File, window}
 import slinky.core._
 import slinky.core.annotations.react
 import slinky.core.facade.Hooks._
-import slinky.core.facade.SetStateHookCallback
+import slinky.core.facade.{ReactElement, SetStateHookCallback}
 import slinky.web.html._
 import zio.{DefaultRuntime, IO, UIO, ZIO}
 
 import scala.util.chaining._
 
 @react object FilesOrDirectoriesInputView {
-  val css: MainCSS.type = MainCSS
-
   type Props = Seq[ImageFileDataUrl] => Unit
 
   val component: FunctionalComponent[Props] = FunctionalComponent[Props] { props =>
     val (imageFiles, imageFilesUpdateState) = useState(Seq[File]())
 
-    div(className := "row justify-content-md-center p-md-3")(
-      div(className := "btn-toolbar mb-md-2")(
+    bootstrapRowWrapper(
+      div(className := "col-auto mb-sm-3 btn-toolbar")(
         div(className := "btn-group")(
           input(
             `type` := "file",
@@ -61,24 +59,32 @@ import scala.util.chaining._
             "Select a EPUB directory"
           )
         ),
-        div(className := "input-group ml-md-2", onClick := { _ =>
+        div(className := "input-group ml-sm-2", onClick := { _ =>
           viewEpubFiles(imageFiles, props)
         })(
           label(className := "btn btn-success")("Start to view")
         )
       ),
       div(className := "w-100"),
-      FileNamesListView(imageFiles)
+      div(className := "col-lg-7")(FileNamesListView(imageFiles))
     )
+
   }
+
+  def bootstrapRowWrapper(children: ReactElement*): ReactElement =
+    div(className := "container")(
+      div(className := "row justify-content-center p-sm-4")(
+        children
+      )
+    )
 
   def addEpubFiles(
       files: Seq[File],
       imageFilesUpdateState: SetStateHookCallback[Seq[File]],
-      filter:Boolean
+      filter: Boolean
     ): Unit = {
     val sortedNewAddedEpubFiles = files
-      .pipe(files => if(filter) files.filter(_.name.endsWith(".epub")) else files)
+      .pipe(files => if (filter) files.filter(_.name.endsWith(".epub")) else files)
       .pipe(files => SortUtil.sortForASeriesThings(files)(Show.show(_.name)))
     imageFilesUpdateState(lastEpubFiles => lastEpubFiles ++ sortedNewAddedEpubFiles)
   }

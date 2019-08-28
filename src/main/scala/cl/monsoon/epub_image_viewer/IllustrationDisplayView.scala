@@ -12,8 +12,6 @@ import slinky.web.html._
 import scala.scalajs.js
 
 @react object IllustrationDisplayView {
-  val css: MainCSS.type = MainCSS
-
   type Props = (Seq[ImageFileDataUrl], Option[Seq[ImageFileDataUrl]] => Unit)
 
   val component: FunctionalComponent[Props] = FunctionalComponent[Props] { props =>
