@@ -8,6 +8,8 @@ import scala.scalajs.LinkingInfo
 import scala.scalajs.js.annotation.JSExportTopLevel
 
 object Main {
+  val css: MainCSS.type = MainCSS
+
   val bootstrapCss: BootstrapCss.type = BootstrapCss
 
   @JSExportTopLevel("main")
