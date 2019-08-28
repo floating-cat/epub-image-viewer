@@ -38,6 +38,7 @@ import scala.util.chaining._
             // only search .epub files when users select the directories).
             // But users can still choose ALL Files in the input dialog.
             accept := ".epub",
+            multiple,
             onChange := { e =>
               addEpubFiles(e.target.files.toSeq, imageFilesUpdateState, filter = false)
             }
