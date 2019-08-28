@@ -18,13 +18,13 @@ class Archive(@unused file: File, @unused options: Options) extends js.Object {
 }
 
 trait Options extends js.Object {
-  def workerUrl: String
+  val workerUrl: String
 }
 
 object Archive {
   def extractZip(file: File)(implicit executor: ExecutionContext): Future[String => Option[File]] =
     new Archive(file, new Options {
-      override def workerUrl: String = "worker-bundle.js"
+      override val workerUrl: String = "worker-bundle.js"
     }).open()
       .toFuture
       .flatMap(_.extractFiles().toFuture)
