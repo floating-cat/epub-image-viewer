@@ -21,6 +21,6 @@ import slinky.web.html._
       IllustrationDisplayView((imageFileDataUrls.get, imageFileDataUrlsUpdateState))
     }
 
-    div(className := "App container")(mainContent)
+    div(className := "App")(mainContent)
   }
 }
