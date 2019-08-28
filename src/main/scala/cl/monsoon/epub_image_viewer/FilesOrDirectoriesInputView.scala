@@ -39,7 +39,7 @@ import scala.util.chaining._
             // But users can still choose ALL Files in the input dialog.
             accept := ".epub",
             onChange := { e =>
-              addEpubFiles(e.target.files.toSeq, imageFilesUpdateState, false)
+              addEpubFiles(e.target.files.toSeq, imageFilesUpdateState, filter = false)
             }
           ),
           label(htmlFor := "files", className := "btn btn-secondary")("Select EPUB files"),
@@ -50,7 +50,7 @@ import scala.util.chaining._
             webkitdirectory := "true",
             multiple,
             onChange := { e =>
-              addEpubFiles(e.target.files.toSeq, imageFilesUpdateState, true)
+              addEpubFiles(e.target.files.toSeq, imageFilesUpdateState, filter = true)
             }
           ),
           // current multiple doesn't work with webkitdirectory
