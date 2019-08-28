@@ -32,7 +32,7 @@ final class EpubReaderJs extends EpubReader[File] {
         .flatMap(e => Option(e.getAttribute("full-path")))
         .filter(_.nonEmpty)
         .fold[IO[Errors, FilePath]](
-          IO.fail(NonEmptyChain("Can't find content.opf in epub."))
+          IO.fail(NonEmptyChain("Can't find OPF file path."))
         )(
           IO.succeed
         )
@@ -61,7 +61,7 @@ final class EpubReaderJs extends EpubReader[File] {
         // remove this file because this file doesn't in the DeDRMed Kobo books
         .filterNot(_ == "kobo-locked.html")
         .traverse(
-          idref => itemMap(idref).toValidNec(s"Can't find $idref hrefs in spine documents.")
+          idref => itemMap(idref).toValidNec(s"Can't find $idref hrefs in spine.")
         )
 
       spineDocuments.fold(IO.fail, IO.succeed)
@@ -105,7 +105,7 @@ final class EpubReaderJs extends EpubReader[File] {
   private def getFile(filePath: FilePath): FileReader[File] =
     ZIO
       .access[FileSupplier](_(filePath))
-      .someOrFail(NonEmptyChain(s"Can't find $filePath in this epub file"))
+      .someOrFail(NonEmptyChain(s"Can't find $filePath."))
 
   private def getFileContent(
       filePath: FilePath,
@@ -122,7 +122,7 @@ final class EpubReaderJs extends EpubReader[File] {
             callback(
               IO.fail(
                 NonEmptyChain(
-                  s"Can't get $filePath content in epub: " +
+                  s"Can't get $filePath content: " +
                     s"${fileReader.error.asInstanceOf[DOMException].message}."
                 )
               )

@@ -90,9 +90,11 @@ import scala.util.chaining._
     imageFilesUpdateState(lastEpubFiles => lastEpubFiles ++ sortedNewAddedEpubFiles)
   }
 
-  def viewEpubFiles(epubFiles: Seq[File], imageFileDataUrlsCallback: Props): Unit =
-    epubFiles.toVector
-      .traverse(getEpubFileImageDataUrls)
+  def viewEpubFiles(epubFiles: Seq[File], imageFileDataUrlsCallback: Props): Unit = {
+    val a = epubFiles.toVector
+      .map(getEpubFileImageDataUrls)
+
+    a.sequence
       .flatMap(
         imageDataUrls =>
           UIO.effectTotal {
@@ -104,6 +106,7 @@ import scala.util.chaining._
         ZIO.none
       })
       .pipe(new DefaultRuntime {}.unsafeRunAsync_(_))
+  }
 
   def getEpubFileImageDataUrls(epubFile: File): IO[Errors, Seq[ImageFileDataUrl]] =
     ZIO
@@ -113,4 +116,5 @@ import scala.util.chaining._
         e => NonEmptyChain(s"Can't load ${epubFile.name}: " + e.getMessage)
       )
       .flatMap(new EpubReaderJs().getImageDataUrl.provide)
+      .mapError(errors => errors.prepend(s"${epubFile.name}:"))
 }
