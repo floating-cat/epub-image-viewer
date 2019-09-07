@@ -13,3 +13,7 @@
     max-height: 100vh;
     height: auto;
 }
+
+.backslash-n-is-new-line {
+    white-space: pre-line;
+}
