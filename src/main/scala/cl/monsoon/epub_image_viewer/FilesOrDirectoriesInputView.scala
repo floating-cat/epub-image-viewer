@@ -8,7 +8,6 @@ import cl.monsoon.epub_image_viewer.facade.Archive
 import cl.monsoon.epub_image_viewer.util.CustomAttributeUtil.webkitdirectory
 import cl.monsoon.epub_image_viewer.util.DomImplicit._
 import cl.monsoon.epub_image_viewer.util.SortUtil
-import cl.monsoon.epub_image_viewer.util.ZIOImplicit._
 import org.scalajs.dom.console.log
 import org.scalajs.dom.{File, window}
 import slinky.core._
@@ -16,6 +15,7 @@ import slinky.core.annotations.react
 import slinky.core.facade.Hooks._
 import slinky.core.facade.{ReactElement, SetStateHookCallback}
 import slinky.web.html._
+import zio.interop.catz._
 import zio.{DefaultRuntime, IO, UIO, ZIO}
 
 import scala.util.chaining._
