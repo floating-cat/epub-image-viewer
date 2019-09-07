@@ -6,9 +6,9 @@ import cats.data._
 import cats.implicits._
 import cl.monsoon.epub_image_viewer.EpubReader.{Errors, FilePath, ImageFileDataUrl, ImageFilePath}
 import cl.monsoon.epub_image_viewer.facade.DOMException
-import cl.monsoon.epub_image_viewer.util.ZIOImplicit._
 import org.scalajs.dom.ext._
 import org.scalajs.dom.{DOMParser, Document, Element, File}
+import zio.interop.catz._
 import zio.{IO, ZIO}
 
 final class EpubReaderJs extends EpubReader[File] {

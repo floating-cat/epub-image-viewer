@@ -14,10 +14,10 @@ libraryDependencies ++= Seq(
   "me.shadaj" %%% "slinky-web" % "0.6.2",
   "me.shadaj" %%% "slinky-hot" % "0.6.2",
   "org.scala-js" %%% "scalajs-dom" % "0.9.7",
-  "org.typelevel" %%% "cats-core" % "2.0.0-RC1",
-  "org.typelevel" %%% "cats-effect" % "2.0.0-RC1",
-  "dev.zio" %%% "zio" % "1.0.0-RC11-1",
-  "dev.zio" %%% "zio-interop-cats" % "2.0.0.0-RC2",
+  "dev.zio" %%% "zio" % "1.0.0-RC12-1",
+  "dev.zio" %%% "zio-interop-cats" % "2.0.0.0-RC3",
+  "org.typelevel" %%% "cats-core" % "2.0.0-RC2",
+  "org.typelevel" %%% "cats-effect" % "2.0.0-RC2",
   "org.scalatest" %%% "scalatest" % "3.0.8" % Test
 )
 
@@ -28,22 +28,21 @@ libraryDependencies ++= Seq(
 testFrameworks += new TestFramework("verify.runner.Framework")
 
 npmDependencies in Compile ++= Seq(
-  "react" -> "16.8.6",
-  "react-dom" -> "16.8.6",
+  "react" -> "16.9.0",
+  "react-dom" -> "16.9.0",
   "react-proxy" -> "1.1.8",
-  "file-loader" -> "3.0.1",
-  "style-loader" -> "0.23.1",
-  "css-loader" -> "2.1.1",
+  "file-loader" -> "4.2.0",
+  "style-loader" -> "1.0.0",
+  "css-loader" -> "3.2.0",
   "html-webpack-plugin" -> "3.2.0",
-  "copy-webpack-plugin" -> "5.0.2",
-  "webpack-merge" -> "4.2.1",
+  "copy-webpack-plugin" -> "5.0.4",
+  "webpack-merge" -> "4.2.2",
   "bootstrap" -> "4.3.1",
-  "react-bootstrap" -> "1.0.0-beta.12",
-  "libarchive.js" -> "1.2.0"
+  "libarchive.js" -> "1.3.0"
 )
 
-version in webpack := "4.29.6"
-version in startWebpackDevServer := "3.2.1"
+version in webpack := "4.39.3"
+version in startWebpackDevServer := "3.8.0"
 
 webpackResources := baseDirectory.value / "webpack" * "*"
 
