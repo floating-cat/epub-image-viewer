@@ -21,22 +21,21 @@ import scala.scalajs.js
     useEffect { () =>
       // Use js function explicit because of  https://stackoverflow.com/q/57148965/2331527
       val keyDownListener: js.Function1[KeyboardEvent, Unit] = { e: KeyboardEvent =>
-        props._1.foreach { urls =>
-          e.key match {
-            case "ArrowLeft" =>
-              if (urls.lengthIs >= imageViewedIndex + 1 + 1) {
-                imageViewedIndexUpdateState(imageViewedIndex + 1)
-              }
-            case "ArrowRight" =>
-              if (imageViewedIndex - 1 >= 0) {
-                imageViewedIndexUpdateState(imageViewedIndex - 1)
-              }
-            case "f" => autoFitImageUpdateState(!_)
-            case "e" =>
-              props._2(none)
-              imageViewedIndexUpdateState(0)
-            case _ =>
-          }
+        e.key match {
+          case "ArrowLeft" =>
+            if (props._1.lengthIs >= imageViewedIndex + 1 + 1) {
+              imageViewedIndexUpdateState(imageViewedIndex + 1)
+            }
+          case "ArrowRight" =>
+            if (imageViewedIndex - 1 >= 0) {
+              imageViewedIndexUpdateState(imageViewedIndex - 1)
+            }
+          case "f" =>
+            autoFitImageUpdateState(!_)
+          case "e" =>
+            props._2(none)
+            imageViewedIndexUpdateState(0)
+          case _ =>
         }
       }
 
@@ -46,7 +45,7 @@ import scala.scalajs.js
     }
 
     img(
-      className := "illustration" + (if (autoFitImage) " auto_fit" else ""),
+      className := "illustration" + (if (autoFitImage) " auto-fit" else ""),
       src := props._1(imageViewedIndex)
     )
   }
