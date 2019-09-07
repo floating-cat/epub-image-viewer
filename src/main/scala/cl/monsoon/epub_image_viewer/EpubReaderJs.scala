@@ -4,14 +4,24 @@ import java.net.URI
 
 import cats.data._
 import cats.implicits._
-import cl.monsoon.epub_image_viewer.EpubReader.{Errors, FilePath, ImageFileDataUrl, ImageFilePath}
+import cl.monsoon.epub_image_viewer.EpubReaderJs._
 import cl.monsoon.epub_image_viewer.facade.DOMException
 import org.scalajs.dom.ext._
 import org.scalajs.dom.{DOMParser, Document, Element, File}
 import zio.interop.catz._
 import zio.{IO, ZIO}
 
-final class EpubReaderJs extends EpubReader[File] {
+object EpubReaderJs {
+  type FileSupplier = FilePath => Option[File]
+  type FileReader[A] = ZIO[FileSupplier, Errors, A]
+
+  type FilePath = String
+  type ImageFilePath = String
+  type ImageFileDataUrl = String
+  type Errors = NonEmptyChain[String]
+}
+
+final class EpubReaderJs extends EpubReader[FileReader] {
 
   val containerXmlFilePath = "META-INF/container.xml"
 

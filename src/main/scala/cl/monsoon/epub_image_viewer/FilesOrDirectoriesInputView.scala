@@ -3,7 +3,7 @@ package cl.monsoon.epub_image_viewer
 import cats.Show
 import cats.data.NonEmptyChain
 import cats.implicits._
-import cl.monsoon.epub_image_viewer.EpubReader.{Errors, ImageFileDataUrl}
+import cl.monsoon.epub_image_viewer.EpubReaderJs.{Errors, ImageFileDataUrl}
 import cl.monsoon.epub_image_viewer.facade.Archive
 import cl.monsoon.epub_image_viewer.util.CustomAttributeUtil.webkitdirectory
 import cl.monsoon.epub_image_viewer.util.DomImplicit._

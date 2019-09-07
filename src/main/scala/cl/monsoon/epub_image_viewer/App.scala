@@ -1,7 +1,7 @@
 package cl.monsoon.epub_image_viewer
 
 import cats.implicits._
-import cl.monsoon.epub_image_viewer.EpubReader.ImageFileDataUrl
+import cl.monsoon.epub_image_viewer.EpubReaderJs.ImageFileDataUrl
 import slinky.core._
 import slinky.core.annotations.react
 import slinky.core.facade.Hooks._
